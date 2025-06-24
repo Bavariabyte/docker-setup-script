@@ -36,15 +36,16 @@ sudo mkdir -p "${MOUNTPOINT}"
 
 echo "==> 2. Eintrag in /etc/fstab hinzufügen"
 FSTAB_LINE="${SERVER_IP}:/mnt/tank/${SHARE} ${MOUNTPOINT} nfs defaults,_netdev,vers=3 0 0"
-# prüfen, ob Eintrag schon existiert
 if grep -qsF "${SERVER_IP}:/mnt/tank/${SHARE}" /etc/fstab; then
   echo "Eintrag für ${SHARE} existiert bereits in /etc/fstab, überspringe"
 else
   echo "${FSTAB_LINE}" | sudo tee -a /etc/fstab
+  echo "==> systemd-Daemon reload"
+  sudo systemctl daemon-reload
 fi
 
-echo "==> Mount ausführen"
+echo "==> 3. Mount ausführen"
 sudo mount -a
 
-echo "==> Fertig: ${MOUNTPOINT} ist mounted:"
+echo "==> Fertig: ${MOUNTPOINT} ist gemountet:"
 mount | grep "${MOUNTPOINT}"
